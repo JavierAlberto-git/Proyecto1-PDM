@@ -11,9 +11,7 @@ class TaskRepository(private val dao: TaskDao) {
     fun getAll(): Flow<List<Task>> = dao.getAllTasks()
 
     suspend fun findById(taskId: Int): Task? = dao.getTaskById(taskId)
-
-    suspend fun findTask(id: Int): Task? = dao.mostrarTask(id)
-
+    
     suspend fun update(task: Task) = dao.updateTask(task)
 
     suspend fun deleteById(taskId: Int) = dao.deleteTaskById(taskId)
