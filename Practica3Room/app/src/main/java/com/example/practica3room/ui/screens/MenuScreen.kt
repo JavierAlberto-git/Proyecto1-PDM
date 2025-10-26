@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -66,6 +67,15 @@ fun MenuScreen(navController: NavHostController) {
                 text = "Agregar Nueva Tarea",
                 icon = Icons.Default.Add,
                 onClick = { navController.navigate("add_task") }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botón: Gestionar estado de tareas
+            MenuButton(
+                text = "Editar Tareas",
+                icon = Icons.Default.Edit,
+                onClick = { navController.navigate("edit_task") }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
