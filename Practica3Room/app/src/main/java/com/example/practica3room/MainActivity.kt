@@ -4,14 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
 import androidx.room.Room
 import com.example.practica3room.model.AppDatabase
 import com.example.practica3room.model.TaskRepository
-import com.example.practica3room.ui.Screens.AppNavigation
+import com.example.practica3room.ui.screens.Navigator
 import com.example.practica3room.ui.theme.Practica3RoomTheme
 import com.example.practica3room.viewmodel.TaskViewModel
 
@@ -35,12 +31,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Practica3RoomTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavigation(
-                        viewModel = viewModel,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                Navigator(viewModel)
             }
         }
     }
