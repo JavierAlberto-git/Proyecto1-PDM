@@ -51,4 +51,11 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     suspend fun getTaskById(taskId: Int): Task? {
         return repository.findById(taskId)
     }
+
+    // Actualizar el estado de una tarea
+    fun updateTaskStatus(taskId: Int, newStatus: Boolean) {
+        viewModelScope.launch {
+            repository.updateStatus(taskId, newStatus)
+        }
+    }
 }

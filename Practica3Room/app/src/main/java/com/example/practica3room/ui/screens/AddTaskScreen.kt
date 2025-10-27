@@ -4,10 +4,12 @@ package com.example.practica3room.ui.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,6 +23,8 @@ import com.example.practica3room.model.Task
 import com.example.practica3room.ui.theme.BackgroundCream
 import com.example.practica3room.ui.theme.PrimaryBlue
 import com.example.practica3room.viewmodel.TaskViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -30,6 +34,9 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    val datePickerState = rememberDatePickerState()
 
     Scaffold(
         topBar = {
@@ -45,7 +52,8 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Volver"
+                            contentDescription = "Volver",
+                            tint = BackgroundCream
                         )
                     }
                 },
@@ -74,19 +82,43 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
                 placeholder = { Text("Ej: Estudiar Kotlin") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryBlue,
+                    focusedLabelColor = PrimaryBlue,
+                    cursorColor = PrimaryBlue
+                )
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            // Campo de fecha con ícono de calendario
             OutlinedTextField(
                 value = plannedDate,
-                onValueChange = { plannedDate = it },
+                onValueChange = { },
                 label = { Text("Fecha planeada") },
-                placeholder = { Text("Ej: 25/10/2025") },
-                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Selecciona una fecha") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showDatePicker = true },
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                readOnly = true,
+                enabled = false,
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledBorderColor = PrimaryBlue,
+                    disabledLabelColor = PrimaryBlue,
+                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Seleccionar fecha",
+                        tint = PrimaryBlue,
+                        modifier = Modifier.clickable { showDatePicker = true }
+                    )
+                }
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -97,7 +129,7 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
                         errorMessage = "El nombre de la tarea no puede estar vacío"
                         showErrorDialog = true
                     } else if (plannedDate.isBlank()) {
-                        errorMessage = "La fecha planeada no puede estar vacía"
+                        errorMessage = "Debe seleccionar una fecha"
                         showErrorDialog = true
                     } else {
                         val newTask = Task(
@@ -137,7 +169,10 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = PrimaryBlue
+                )
             ) {
                 Text(
                     text = "Cancelar",
@@ -148,6 +183,40 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
         }
     }
 
+    // Date Picker Dialog
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        val date = Date(millis)
+                        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        plannedDate = formatter.format(date)
+                    }
+                    showDatePicker = false
+                }) {
+                    Text("Aceptar", color = PrimaryBlue)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancelar", color = PrimaryBlue)
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    selectedDayContainerColor = PrimaryBlue,
+                    todayContentColor = PrimaryBlue,
+                    todayDateBorderColor = PrimaryBlue
+                )
+            )
+        }
+    }
+
+    // Diálogo de éxito
     if (showSuccessDialog) {
         AlertDialog(
             onDismissRequest = { },
@@ -166,7 +235,10 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
                     onClick = {
                         showSuccessDialog = false
                         navController.popBackStack()
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryBlue
+                    )
                 ) {
                     Text("Aceptar")
                 }
@@ -174,13 +246,19 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
         )
     }
 
+    // Diálogo de error
     if (showErrorDialog) {
         AlertDialog(
             onDismissRequest = { showErrorDialog = false },
             title = { Text("Error", fontWeight = FontWeight.Bold) },
             text = { Text(errorMessage) },
             confirmButton = {
-                Button(onClick = { showErrorDialog = false }) {
+                Button(
+                    onClick = { showErrorDialog = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryBlue
+                    )
+                ) {
                     Text("Entendido")
                 }
             }
