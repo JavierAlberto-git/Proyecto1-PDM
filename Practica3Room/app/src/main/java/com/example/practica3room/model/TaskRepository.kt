@@ -20,4 +20,6 @@ class TaskRepository(private val dao: TaskDao) {
 
     suspend fun markAsCompleted(taskId: Int) = dao.markTaskAsCompleted(taskId)
 
+    suspend fun updateStatus(taskId: Int, newStatus: Boolean) = dao.updateTaskStatus(taskId, newStatus)
+
 }

@@ -33,4 +33,7 @@ interface TaskDao {
     @Query("UPDATE Task SET status = 1 WHERE id = :taskId")
     suspend fun markTaskAsCompleted(taskId: Int)
 
+    @Query("UPDATE Task SET status = :newStatus WHERE id = :taskId")
+    suspend fun updateTaskStatus(taskId: Int, newStatus: Boolean)
+
 }
