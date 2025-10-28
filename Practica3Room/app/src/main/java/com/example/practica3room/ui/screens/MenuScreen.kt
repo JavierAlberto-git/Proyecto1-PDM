@@ -93,7 +93,7 @@ fun MenuScreen(navController: NavHostController) {
             MenuButton(
                 text = "Eliminar Tareas",
                 icon = Icons.Default.Delete,
-                onClick = { navController.navigate("delete_tasks") }
+                onClick = { navController.navigate("delete_task") }
             )
         }
     }
