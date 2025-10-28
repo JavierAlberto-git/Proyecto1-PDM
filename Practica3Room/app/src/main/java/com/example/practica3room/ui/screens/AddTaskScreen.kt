@@ -96,7 +96,7 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
             OutlinedTextField(
                 value = plannedDate,
                 onValueChange = { },
-                label = { Text("Fecha planeada") },
+                label = { Text("Fecha de entrega") },
                 placeholder = { Text("Selecciona una fecha") },
                 modifier = Modifier
                     .fillMaxWidth()

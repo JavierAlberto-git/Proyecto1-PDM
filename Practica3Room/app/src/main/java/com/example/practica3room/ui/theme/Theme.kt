@@ -9,45 +9,65 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+// Esquema de colores personalizado para tema claro
+private val LightColorScheme = lightColorScheme(
+    primary = PrimaryBlue,
+    onPrimary = BackgroundCream,
+    primaryContainer = PrimaryBlue,
+    onPrimaryContainer = BackgroundCream,
+    secondary = PrimaryBlue,
+    onSecondary = BackgroundCream,
+    tertiary = PrimaryBlue,
+    background = BackgroundCream,
+    onBackground = PrimaryBlue,
+    surface = Color.White,
+    onSurface = PrimaryBlue,
+    surfaceVariant = BackgroundCream,
+    onSurfaceVariant = PrimaryBlue
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+// Esquema de colores personalizado para tema oscuro (usa tus colores también)
+private val DarkColorScheme = darkColorScheme(
+    primary = PrimaryBlue,
+    onPrimary = BackgroundCream,
+    primaryContainer = PrimaryBlue,
+    onPrimaryContainer = BackgroundCream,
+    secondary = PrimaryBlue,
+    onSecondary = BackgroundCream,
+    tertiary = PrimaryBlue,
+    background = Color(0xFF1C1C1C),
+    onBackground = BackgroundCream,
+    surface = Color(0xFF2C2C2C),
+    onSurface = BackgroundCream,
+    surfaceVariant = Color(0xFF3C3C3C),
+    onSurfaceVariant = BackgroundCream
 )
 
 @Composable
 fun Practica3RoomTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    darkTheme: Boolean = false, // Forzar siempre tema claro
+    dynamicColor: Boolean = false, // Desactivar colores dinámicos de Android 12+
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    // Siempre usar el esquema de colores claro con tu paleta personalizada
+    val colorScheme = LightColorScheme
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            // Barra de estado con tu color primario
+            window.statusBarColor = PrimaryBlue.toArgb()
+            // Iconos de la barra de estado en color claro
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+        }
     }
 
     MaterialTheme(
